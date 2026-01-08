@@ -1,0 +1,74 @@
+#Simple PowerShell Examples
+
+#1. Listing All Running Processes: Get-Process
+#This command lists all the processes currently running on the local computer.
+
+#2. Getting Information About a Specific Process: Get-Process -Name notepad
+#This command retrieves information about the 'notepad' process on the local computer.
+
+#Intermediate PowerShell Examples
+
+#3. Stopping a Process: Stop-Process -Name notepad
+#This command stops the 'notepad' process on the local computer.
+
+#4. Starting a Process: Start-Process -Name notepad
+#This command starts the 'notepad' application on the local computer.
+
+#5. Listing Processes on a Remote Computer (DC1)
+<#
+$credential = Get-Credential
+Invoke-Command -ComputerName DC1 -Credential $credential -ScriptBlock {
+    Get-Process | Select-Object Name, Id, CPU, WS, StartTime
+}
+#>
+#This command lists all running processes on the remote computer 'DC1'.
+
+#6. Stopping a Process on a Remote Computer (DC1)
+<#
+$credential = Get-Credential
+Invoke-Command -ComputerName DC1 -Credential $credential -ScriptBlock {
+    Stop-Process -Name notepad
+}
+#>
+#This command stops the 'notepad' process on the remote computer 'DC1'.
+
+#Advanced PowerShell Examples
+
+#7. Gathering Detailed Process Information (Local)
+#Get-Process | Select-Object Name, Id, CPU, WS, StartTime
+#This command retrieves detailed information about each running process, including the process name, ID, CPU usage, working set (memory), and start time.
+
+#8. Gathering Detailed Process Information (Remote - DC1)
+<#
+$credential = Get-Credential
+Invoke-Command -ComputerName DC1 -Credential $credential -ScriptBlock {
+    Get-Process | Select-Object Name, Id, CPU, WS, StartTime
+}
+#>
+#This command retrieves detailed information about each running process on the remote computer 'DC1'.
+
+#9. Monitoring CPU Usage of a Specific Process Over Time
+<#
+$processName = "notepad"
+while ($true) {
+    $process = Get-Process -Name $processName
+    $cpuUsage = $process.CPU
+    Write-Output "Process $processName CPU usage: $cpuUsage%"
+    Start-Sleep -Seconds 5
+}
+#>
+#This script continuously monitors the CPU usage of the 'notepad' process and outputs the usage every 5 seconds.
+
+#10. Exporting Process Information to a CSV File
+#Get-Process | Select-Object Name, Id, CPU, WS, StartTime | Export-Csv -Path "C:\processes.csv" -NoTypeInformation
+#This command retrieves detailed information about each running process on the local computer and exports it to a CSV file.
+
+#11. Checking for Specific Process and Sending Alert (Local)
+<#
+$processName = "notepad"
+$process = Get-Process -Name $processName -ErrorAction SilentlyContinue
+if ($process) {
+    Send-MailMessage -To "admin@example.com" -From "alert@example.com" -Subject "Process Alert" -Body "The $processName process is running on the system." -SmtpServer "smtp.example.com"
+}
+#>
+#This script checks if the 'notepad' process is running and sends an email alert if it is found.
